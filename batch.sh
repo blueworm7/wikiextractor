@@ -18,8 +18,8 @@ fi
 
 num=1
 prefix=""
-lang="en"
 date=`date +"%Y%m%d"`
+max_len=400
 
 for file in `ls ${in_dir}/*xml*`
 do
@@ -28,5 +28,7 @@ do
 	fi
     bname=`basename ${file}`
 	python WikiExtractor.py ${file} -q -o - > ${in_dir}/text/wiki.mono.${date}.${prefix}${num}.${lang}
+	python remove_empty_html_line.py -i ${in_dir}/text/wiki.mono.${date}.${prefix}${num}.${lang} -o ${in_dir}/text/wiki.mono.${date}.${prefix}${num}.noempty.${lang}
+    awk -v max_len=${max_len} '{ if (length($0) < max_len) print }' ${in_dir}/text/wiki.mono.${date}.${prefix}${num}.noempty.${lang} > ${in_dir}/text/wiki.mono.${date}.${prefix}${num}.noempty.max${max_len}.${lang}
 	num=$((num + 1))
 done
